@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSTM Model — Paper.AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dark">
+
+<nav class="navbar">
+    <div class="logo">PAPER<span>.</span>AI</div>
+    <div style="display:flex; gap:1rem; align-items:center;">
+        <a href="/" class="back-btn">BACK</a>
+        <button class="theme-btn" onclick="toggleTheme()">LIGHT MODE</button>
+    </div>
+</nav>
+
+<div class="page-layout">
+    <div class="page-left">
+        <div class="hero-label">Version 01 — Self Trained</div>
+        <h1>LSTM<br><span>MODEL</span></h1>
+        <p>Type a question word below. Our trained LSTM model will generate geography questions using the patterns it learned.</p>
+        <div class="how-it-works">
+            <div class="hw-label">HOW IT WORKS</div>
+            <div class="hw-step">01 — You type a half question</div>
+            <div class="hw-step">02 — LSTM predicts word by word</div>
+            <div class="hw-step">03 — Full question generated</div>
+        </div>
+    </div>
+
+    <div class="page-right">
+        <div class="input-card">
+            <div class="input-label">Write the question example</div>
+            <input type="text" class="text-input" id="starter" placeholder="What , Why , How">
+
+            <div class="input-label" style="margin-top:1.5rem;">NUMBER OF QUESTIONS</div>
+            <div class="slider-row">
+                <input type="range" min="1" max="10" value="5" id="num-q"
+                    oninput="document.getElementById('num-val').textContent=this.value">
+                <span class="slider-val" id="num-val">5</span>
+            </div>
+
+            <button class="chunky-btn" style="margin-top:2rem;" onclick="generateLSTM()">
+                GENERATE QUESTIONS
+            </button>
+        </div>
+
+        <div class="output-card" id="output-box" style="display:none;">
+            <div class="output-label">GENERATED QUESTIONS</div>
+            <div id="output-text" class="output-text"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.querySelector('.theme-btn');
+        if (body.classList.contains('dark')) {
+            body.classList.replace('dark', 'light');
+            btn.textContent = 'DARK MODE';
+        } else {
+            body.classList.replace('light', 'dark');
+            btn.textContent = 'LIGHT MODE';
+        }
+    }
+
+    function generateLSTM() {
+        const starter = document.getElementById('starter').value;
+        const numQ = document.getElementById('num-q').value;
+        if (!starter) { alert('Please type a topic word!'); return; }
+        const btn = document.querySelector('.chunky-btn');
+        btn.textContent = 'GENERATING...';
+        btn.style.opacity = '0.7';
+        document.getElementById('output-box').style.display = 'block';
+        document.getElementById('output-text').textContent = 'Thinking...';
+        fetch('/generate-lstm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ starter: starter, num_questions: numQ })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('output-text').textContent = data.result;
+            btn.textContent = 'GENERATE QUESTIONS';
+            btn.style.opacity = '1';
+        });
+    }
+</script>
+</body>
+</html>

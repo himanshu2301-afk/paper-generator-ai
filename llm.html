@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Model — Paper.AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dark">
+
+<nav class="navbar">
+    <div class="logo">PAPER<span>.</span>AI</div>
+    <div style="display:flex; gap:1rem; align-items:center;">
+        <a href="/" class="back-btn">BACK</a>
+        <button class="theme-btn" onclick="toggleTheme()">LIGHT MODE</button>
+    </div>
+</nav>
+
+<div class="page-layout">
+    <div class="page-left">
+        <div class="hero-label">Version 02 — LLM Powered</div>
+        <h1>LLM<br><span>MODEL</span></h1>
+        <p>Upload a PDF, configure your question types and difficulty. Groq AI will generate a complete question paper instantly.</p>
+        <div class="how-it-works">
+            <div class="hw-label">HOW IT WORKS</div>
+            <div class="hw-step">01 — Upload your PDF</div>
+            <div class="hw-step">02 — Set question config</div>
+            <div class="hw-step">03 — AI generates paper</div>
+        </div>
+    </div>
+
+    <div class="page-right">
+        <div class="input-card">
+            <div class="input-label">UPLOAD PDF</div>
+            <div class="upload-zone" onclick="document.getElementById('pdf-input').click()">
+                <div class="upload-text" id="upload-text">CLICK TO UPLOAD PDF</div>
+                <input type="file" id="pdf-input" accept=".pdf" style="display:none"
+                    onchange="document.getElementById('upload-text').textContent=this.files[0].name">
+            </div>
+
+            <div class="grid2" style="margin-top:1.5rem;">
+                <div class="control-box">
+                    <div class="input-label">MCQ</div>
+                    <div class="slider-row">
+                        <input type="range" min="1" max="15" value="5" id="mcq"
+                            oninput="document.getElementById('mcq-val').textContent=this.value">
+                        <span class="slider-val" id="mcq-val">5</span>
+                    </div>
+                </div>
+                <div class="control-box">
+                    <div class="input-label">TRUE / FALSE</div>
+                    <div class="slider-row">
+                        <input type="range" min="1" max="15" value="3" id="tf"
+                            oninput="document.getElementById('tf-val').textContent=this.value">
+                        <span class="slider-val" id="tf-val">3</span>
+                    </div>
+                </div>
+                <div class="control-box">
+                    <div class="input-label">FILL IN BLANKS</div>
+                    <div class="slider-row">
+                        <input type="range" min="1" max="15" value="3" id="fill"
+                            oninput="document.getElementById('fill-val').textContent=this.value">
+                        <span class="slider-val" id="fill-val">3</span>
+                    </div>
+                </div>
+                <div class="control-box">
+                    <div class="input-label">DIRECT</div>
+                    <div class="slider-row">
+                        <input type="range" min="1" max="15" value="4" id="direct"
+                            oninput="document.getElementById('direct-val').textContent=this.value">
+                        <span class="slider-val" id="direct-val">4</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-label" style="margin-top:1.5rem;">DIFFICULTY</div>
+            <div class="diff-row">
+                <div class="diff-pill active" onclick="setDiff(this)">EASY</div>
+                <div class="diff-pill" onclick="setDiff(this)">MEDIUM</div>
+                <div class="diff-pill" onclick="setDiff(this)">HARD</div>
+            </div>
+
+            <button class="chunky-btn" style="margin-top:2rem;" onclick="generateLLM()">
+                GENERATE PAPER
+            </button>
+        </div>
+
+        <div class="output-card" id="output-box" style="display:none;">
+            <div class="output-label">GENERATED QUESTION PAPER</div>
+            <div id="output-text" class="output-text"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.querySelector('.theme-btn');
+        if (body.classList.contains('dark')) {
+            body.classList.replace('dark', 'light');
+            btn.textContent = 'DARK MODE';
+        } else {
+            body.classList.replace('light', 'dark');
+            btn.textContent = 'LIGHT MODE';
+        }
+    }
+
+    function setDiff(el) {
+        document.querySelectorAll('.diff-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function generateLLM() {
+        const file = document.getElementById('pdf-input').files[0];
+        if (!file) { alert('Please upload a PDF!'); return; }
+        const btn = document.querySelector('.chunky-btn');
+        btn.textContent = 'GENERATING...';
+        btn.style.opacity = '0.7';
+        document.getElementById('output-box').style.display = 'block';
+        document.getElementById('output-text').textContent = 'Reading PDF and generating...';
+        const formData = new FormData();
+        formData.append('pdf', file);
+        formData.append('num_mcq', document.getElementById('mcq').value);
+        formData.append('num_tf', document.getElementById('tf').value);
+        formData.append('num_fill', document.getElementById('fill').value);
+        formData.append('num_direct', document.getElementById('direct').value);
+        formData.append('difficulty', document.querySelector('.diff-pill.active').textContent);
+        fetch('/generate-llm', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('output-text').textContent = data.result;
+            btn.textContent = 'GENERATE PAPER';
+            btn.style.opacity = '1';
+        });
+    }
+</script>
+</body>
+</html>

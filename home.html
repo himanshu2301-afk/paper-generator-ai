@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper.AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dark">
+
+<nav class="navbar">
+    <div class="logo">PAPER<span>.</span>AI</div>
+    <button class="theme-btn" onclick="toggleTheme()">LIGHT MODE</button>
+</nav>
+
+<div class="home-layout">
+
+    <div class="home-left">
+        <div class="hero-label">AI Powered — Two Models</div>
+        <h1>BUILD YOUR<br><span>QUESTION</span><br>PAPER.</h1>
+        <p>Train your own model or use LLM. Upload a PDF, set your config, generate instantly.</p>
+        <div class="built-with">
+            <span>BUILT WITH</span>
+            <div class="tech-pill">LSTM</div>
+            <div class="tech-pill">GROQ</div>
+            <div class="tech-pill">FLASK</div>
+        </div>
+    </div>
+
+    <div class="home-middle">
+        <div class="orb-container">
+            <div class="orb">
+                <div class="orb-ring ring1"></div>
+                <div class="orb-ring ring2"></div>
+                <div class="orb-ring ring3"></div>
+                <div class="orb-core"></div>
+            </div>
+        </div>
+    </div>
+    <div class="home-right">
+        <a href="/lstm" class="version-card">
+            <div class="v-label">Version 01 — Self Trained</div>
+            <div class="v-title">LSTM MODEL</div>
+            <div class="v-desc">Type a starter phrase. Our trained geography model predicts and completes the question from learned patterns.</div>
+            <div class="stat-row">
+                <div class="stat">
+                    <div class="stat-num">100+</div>
+                    <div class="stat-label">TRAINED ON</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">LSTM</div>
+                    <div class="stat-label">ARCHITECTURE</div>
+                </div>
+            </div>
+            <div class="chunky-btn">TRY LSTM MODEL</div>
+        </a>
+
+        <a href="/llm" class="version-card">
+            <div class="v-label">Version 02 — LLM Powered</div>
+            <div class="v-title">LLM MODEL</div>
+            <div class="v-desc">Upload any PDF. Generate MCQ, True/False, Fill in the blanks and direct questions with perfect accuracy.</div>
+            <div class="stat-row">
+                <div class="stat">
+                    <div class="stat-num">4</div>
+                    <div class="stat-label">Q TYPES</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">GROQ</div>
+                    <div class="stat-label">POWERED BY</div>
+                </div>
+            </div>
+            <div class="chunky-btn">TRY LLM MODEL</div>
+        </a>
+    </div>
+
+</div>
+
+<script>
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.querySelector('.theme-btn');
+        if (body.classList.contains('dark')) {
+            body.classList.replace('dark', 'light');
+            btn.textContent = 'DARK MODE';
+        } else {
+            body.classList.replace('light', 'dark');
+            btn.textContent = 'LIGHT MODE';
+        }
+    }
+</script>
+
+</body>
+</html>
